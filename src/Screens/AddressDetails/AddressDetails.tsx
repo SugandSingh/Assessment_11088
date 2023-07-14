@@ -84,7 +84,7 @@ const AddressDetails: React.FC<AddressDetailsProps> = ({ navigation }) => {
         }
       />
 
-      <CommonButton onPress={handleSubmit} />
+      <CommonButton variant="solid" label="Next"  onPress={handleSubmit} />
     </View>
   );
 };
