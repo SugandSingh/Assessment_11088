@@ -34,6 +34,7 @@ const CommonAvatar = (props: AvatarProps) => {
     if (result && onPress) {
       onPress(result);
     }
+    onClose()
   };
 
   const defaultImageSource =
