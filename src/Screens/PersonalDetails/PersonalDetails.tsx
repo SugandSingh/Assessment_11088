@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { View, Text, Radio, Stack, ScrollView, KeyboardAvoidingView, useToast } from 'native-base';
+import {
+  View,
+  Text,
+  Radio,
+  Stack,
+  ScrollView,
+  KeyboardAvoidingView,
+  useToast,
+} from 'native-base';
 import CommonAvatar from '../../Component/Avatar/Avatar';
 import CommonInput from '../../Component/TextInput/TextInput';
 import CommonButton from '../../Component/Button/Button';
-import Styles from './PersonalDetailsStyle';
 import { Routes } from '../../Navigation/Routes';
+import Styles from './PersonalDetailsStyle';
 
 type Gender = 'male' | 'female';
 
@@ -55,7 +63,7 @@ const RenderGender = ({ value, setValue }: RenderGenderProps) => {
   );
 };
 
-const PersonalDetails = ({ navigation }: any) => {
+const PersonalDetails: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [basicFormData, setBasicFormData] = useState<BasicFormData>({
     firstname: '',
     lastname: '',
@@ -69,11 +77,19 @@ const PersonalDetails = ({ navigation }: any) => {
 
   const toast = useToast();
 
-  const onNextPressHandle = () => {
+  const validateForm = (): boolean => {
     const { firstname, lastname, password, confirmPassword, phone, email } = basicFormData;
-    if (firstname && lastname && password && confirmPassword && phone && email) {
+
+    if (
+      firstname.trim() &&
+      lastname.trim() &&
+      password.trim() &&
+      confirmPassword.trim() &&
+      phone.trim() &&
+      email.trim()
+    ) {
       if (password === confirmPassword) {
-        navigation.navigate(Routes.PROFESSIONAL_DETAILS);
+        return true;
       } else {
         toast.show({
           title: 'Password does not match',
@@ -86,7 +102,14 @@ const PersonalDetails = ({ navigation }: any) => {
         placement: 'bottom',
       });
     }
-   
+
+    return false;
+  };
+
+  const onNextPressHandle = () => {
+    if (validateForm()) {
+      navigation.navigate(Routes.PROFESSIONAL_DETAILS);
+    }
   };
 
   return (
@@ -133,7 +156,10 @@ const PersonalDetails = ({ navigation }: any) => {
             keyboardType="email-address"
             onChangeText={(text) => setBasicFormData({ ...basicFormData, email: text })}
           />
-          <RenderGender value={basicFormData.gender} setValue={(value) => setBasicFormData({ ...basicFormData, gender: value })} />
+          <RenderGender
+            value={basicFormData.gender}
+            setValue={(value) => setBasicFormData({ ...basicFormData, gender: value })}
+          />
           <CommonInput
             isRequired
             secureTextEntry
@@ -159,17 +185,4 @@ const PersonalDetails = ({ navigation }: any) => {
 
 export default PersonalDetails;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: 'white',
-  },
-  genderContainer: {
-    margin: 10,
-  },
-  genderText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-});
+

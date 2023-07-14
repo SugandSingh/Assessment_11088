@@ -20,16 +20,24 @@ const CommonAvatar = (props: AvatarProps) => {
   const {isOpen, onOpen, onClose} = useDisclose();
 
   const selectProfileImage = async (type: string) => {
-    if (type === changeProfileType[0]) {
-      const result = await launchCamera({mediaType: 'photo'});
-    } else {
-      const result = await launchImageLibrary({
-        mediaType: 'photo',
-      });
+    let result: ImagePickerResponse | undefined;
+    try {
+      if (type === changeProfileType[0]) {
+        result = await launchCamera({mediaType: 'photo'});
+      } else {
+        result = await launchImageLibrary({mediaType: 'photo'});
+      }
+    } catch (error) {
+      console.error('Error selecting profile image:', error);
+    }
+
+    if (result && onPress) {
       onPress(result);
-      //   console.log(result);
-    } 
+    }
   };
+
+  const defaultImageSource =
+    'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
 
   return (
     <HStack justifyContent="center" space={2}>
@@ -40,9 +48,8 @@ const CommonAvatar = (props: AvatarProps) => {
         <Avatar
           size={size ? size : 'xl'}
           source={{
-            uri: source
-              ? source
-              : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}}
+            uri: source ? source : defaultImageSource,
+          }}
         />
       </Button>
 
@@ -63,4 +70,3 @@ const CommonAvatar = (props: AvatarProps) => {
 };
 
 export default CommonAvatar;
-
