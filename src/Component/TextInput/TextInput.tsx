@@ -14,7 +14,8 @@ type KeyboardType =
 
 interface CommonInputProps {
   title?: string;
-  RenderIcon?: () => React.ReactNode;
+  RenderIconLeft?: () => React.ReactNode;
+  RenderIconRight?:() => React.ReactNode;
   placeHolder: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
@@ -25,7 +26,8 @@ interface CommonInputProps {
 const CommonInput = (props: CommonInputProps) => {
   const {
     title,
-    RenderIcon,
+    RenderIconLeft,
+    RenderIconRight,
     placeHolder,
     onChangeText,
     secureTextEntry,
@@ -42,9 +44,9 @@ const CommonInput = (props: CommonInputProps) => {
         </Text>
       )}
       <View style={Styles.textInputContainer}>
-        {RenderIcon && (
+        {RenderIconLeft && (
           <View style={Styles.iconWrap}>
-            <RenderIcon />
+            <RenderIconLeft />
           </View>
         )}
         <View style={Styles.placeholderWrap}>
@@ -57,6 +59,10 @@ const CommonInput = (props: CommonInputProps) => {
             keyboardType={keyboardType || 'default'}
           />
         </View>
+        {RenderIconRight && (
+          <View style={Styles.iconWrap}>
+            <RenderIconRight />
+          </View>)}
       </View>
     </View>
   );

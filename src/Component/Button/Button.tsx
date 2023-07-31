@@ -13,7 +13,7 @@ interface CommonButtonProps {
 
 const CommonButton: React.FC<CommonButtonProps> = ({
   label = 'Submit',
-  bgColor = '#023047',
+  bgColor = '#002147',
   variant = 'solid',
   width,
   onPress = () => console.log('Button pressed')

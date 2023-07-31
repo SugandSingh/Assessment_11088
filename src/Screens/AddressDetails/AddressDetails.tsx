@@ -6,6 +6,8 @@ import CommonInput from '../../Component/TextInput/TextInput';
 import CommonDropDown from '../../Component/DropDown/DropDown';
 import CommonButton from '../../Component/Button/Button';
 import Styles from './AddressDetailsStyle';
+import { useToast } from 'native-base';
+import { Routes } from '../../Navigation/Routes';
 
 const States = [
   'Maharashtra',
@@ -17,7 +19,7 @@ const States = [
 ];
 
 const RenderBuildingIcon = () => {
-  return <Icon name="building" size={hp('3%')} color="black" />;
+  return <Icon name="building" size={hp('3%')} color="#002147" />;
 };
 
 interface AddressFormData {
@@ -29,10 +31,11 @@ interface AddressFormData {
 }
 
 interface AddressDetailsProps {
-  navigation: any; // Replace `any` with the appropriate type
+  navigation: any;
 }
 
 const AddressDetails: React.FC<AddressDetailsProps> = ({ navigation }) => {
+  const toast = useToast();
   const [addressFormData, setAddressFormData] = useState<AddressFormData>({
     address: '',
     landmark: '',
@@ -40,35 +43,66 @@ const AddressDetails: React.FC<AddressDetailsProps> = ({ navigation }) => {
     state: '',
     pincode: '',
   });
+  const validateForm = (): boolean => {
+    const {address, landmark, city, state, pincode, } =
+    addressFormData;
 
+    if (
+      address.trim() &&
+      landmark.trim() &&
+      city.trim() &&
+      state.trim() &&
+      pincode.trim() 
+     
+    ) {
+      return true;
+    } else {
+      toast.show({
+        title: 'Please fill required data',
+        placement: 'bottom',
+      });
+    }
+
+    return false;
+  };
   const handleSubmit = () => {
-    navigation.navigate('UserList');
+    if(validateForm()){
+      navigation.navigte(Routes.PERSONAL_DETAILS)
+    }
   };
 
   return (
     <View style={Styles.container}>
       <CommonInput
-        RenderIcon={RenderBuildingIcon}
+       title="Address"
+      isRequired
+        RenderIconLeft={RenderBuildingIcon}
         placeHolder="Address"
         onChangeText={(text) =>
           setAddressFormData({ ...addressFormData, address: text })
         }
       />
       <CommonInput
-        RenderIcon={RenderBuildingIcon}
+       title="Landmark"
+       isRequired
+        RenderIconLeft={RenderBuildingIcon}
         placeHolder="Landmark"
         onChangeText={(text) =>
           setAddressFormData({ ...addressFormData, landmark: text })
         }
       />
       <CommonInput
-        RenderIcon={RenderBuildingIcon}
+       title="City"
+       isRequired
+        RenderIconLeft={RenderBuildingIcon}
         placeHolder="City"
         onChangeText={(text) =>
           setAddressFormData({ ...addressFormData, city: text })
         }
       />
       <CommonDropDown
+       title="State"
+       isRequired
         placeholder="Select your state"
         data={States}
         value={addressFormData.state}
@@ -77,14 +111,16 @@ const AddressDetails: React.FC<AddressDetailsProps> = ({ navigation }) => {
         }
       />
       <CommonInput
-        RenderIcon={RenderBuildingIcon}
+       title="Pin Code"
+       isRequired
+        RenderIconLeft={RenderBuildingIcon}
         placeHolder="Pin Code"
         onChangeText={(text) =>
           setAddressFormData({ ...addressFormData, pincode: text })
         }
       />
 
-      <CommonButton variant="solid" label="Next"  onPress={handleSubmit} />
+      <CommonButton variant="solid" label="Submit"  onPress={handleSubmit} />
     </View>
   );
 };

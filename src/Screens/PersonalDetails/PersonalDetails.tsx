@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Platform } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import React, {useState} from 'react';
+import {Platform, TouchableOpacity} from 'react-native';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import {
 import CommonAvatar from '../../Component/Avatar/Avatar';
 import CommonInput from '../../Component/TextInput/TextInput';
 import CommonButton from '../../Component/Button/Button';
-import { Routes } from '../../Navigation/Routes';
+import {Routes} from '../../Navigation/Routes';
 import Styles from './PersonalDetailsStyle';
 
 type Gender = 'male' | 'female';
@@ -35,11 +35,7 @@ interface BasicFormData {
   profileUri: string;
 }
 
-const RenderIcon = () => {
-  return <Icon name="user" size={hp('3%')} color="black" />;
-};
-
-const RenderGender = ({ value, setValue }: RenderGenderProps) => {
+const RenderGender = ({value, setValue}: RenderGenderProps) => {
   return (
     <View style={Styles.genderContainer}>
       <Text style={Styles.genderText}>Gender</Text>
@@ -48,9 +44,12 @@ const RenderGender = ({ value, setValue }: RenderGenderProps) => {
         name="gender"
         accessibilityLabel="Select Gender"
         value={value}
-        onChange={(nextValue) => setValue(nextValue as Gender)}
-      >
-        <Stack direction={{ base: 'row', md: 'row' }} space={4} w="75%" maxW="300px">
+        onChange={nextValue => setValue(nextValue as Gender)}>
+        <Stack
+          direction={{base: 'row', md: 'row'}}
+          space={4}
+          w="75%"
+          maxW="300px">
           <Radio value="male" size="sm" my={1}>
             Male
           </Radio>
@@ -63,7 +62,8 @@ const RenderGender = ({ value, setValue }: RenderGenderProps) => {
   );
 };
 
-const PersonalDetails: React.FC<{ navigation: any }> = ({ navigation }) => {
+const PersonalDetails: React.FC<{navigation: any}> = ({navigation}) => {
+  const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [basicFormData, setBasicFormData] = useState<BasicFormData>({
     firstname: '',
     lastname: '',
@@ -74,11 +74,18 @@ const PersonalDetails: React.FC<{ navigation: any }> = ({ navigation }) => {
     email: '',
     profileUri: '',
   });
-
+  const RenderIcon = (name: string,disable:Boolean) => {
+    return (
+      <TouchableOpacity disabled={disable} onPress={() => setSecureTextEntry(!secureTextEntry)}>
+        <Entypo name={name} size={hp('3%')} color="#002147" />
+      </TouchableOpacity>
+    );
+  };
   const toast = useToast();
 
   const validateForm = (): boolean => {
-    const { firstname, lastname, password, confirmPassword, phone, email } = basicFormData;
+    const {firstname, lastname, password, confirmPassword, phone, email} =
+      basicFormData;
 
     if (
       firstname.trim() &&
@@ -118,65 +125,91 @@ const PersonalDetails: React.FC<{ navigation: any }> = ({ navigation }) => {
         base: '100%',
         lg: 'auto',
       }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={Styles.container}>
         <ScrollView>
           <CommonAvatar
-            source={basicFormData.profileUri ? basicFormData.profileUri : undefined}
-            onPress={(res) => setBasicFormData({ ...basicFormData, profileUri: res.assets[0].uri })}
+            source={
+              basicFormData.profileUri ? basicFormData.profileUri : undefined
+            }
+            onPress={res =>
+              setBasicFormData({
+                ...basicFormData,
+                profileUri: res.assets[0].uri,
+              })
+            }
           />
           <CommonInput
-            RenderIcon={RenderIcon}
+            RenderIconLeft={() => RenderIcon('user',true)}
             isRequired
             title="First Name"
             placeHolder="Enter your firstname here"
-            onChangeText={(text) => setBasicFormData({ ...basicFormData, firstname: text })}
+            onChangeText={text =>
+              setBasicFormData({...basicFormData, firstname: text})
+            }
           />
           <CommonInput
-            RenderIcon={RenderIcon}
+            RenderIconLeft={() => RenderIcon('user',true)}
             isRequired
             title="Last Name"
             placeHolder="Enter your lastname here"
-            onChangeText={(text) => setBasicFormData({ ...basicFormData, lastname: text })}
+            onChangeText={text =>
+              setBasicFormData({...basicFormData, lastname: text})
+            }
           />
           <CommonInput
             isRequired
-            RenderIcon={RenderIcon}
+            RenderIconLeft={() => RenderIcon('phone',true)}
             title="Phone Number"
             placeHolder="Enter your 10-digit Phone number here"
             keyboardType="phone-pad"
-            onChangeText={(text) => setBasicFormData({ ...basicFormData, phone: text })}
+            onChangeText={text =>
+              setBasicFormData({...basicFormData, phone: text})
+            }
           />
           <CommonInput
+            RenderIconLeft={() => RenderIcon('mail',true)}
             isRequired
-            RenderIcon={RenderIcon}
             title="Email"
             placeHolder="Enter your email here"
             keyboardType="email-address"
-            onChangeText={(text) => setBasicFormData({ ...basicFormData, email: text })}
+            onChangeText={text =>
+              setBasicFormData({...basicFormData, email: text})
+            }
           />
           <RenderGender
             value={basicFormData.gender}
-            setValue={(value) => setBasicFormData({ ...basicFormData, gender: value })}
+            setValue={value =>
+              setBasicFormData({...basicFormData, gender: value})
+            }
           />
           <CommonInput
             isRequired
-            secureTextEntry
-            RenderIcon={RenderIcon}
+            secureTextEntry={secureTextEntry}
+            RenderIconRight={() => 
+              RenderIcon( secureTextEntry ?'eye-with-line':'eye') 
+            }
+            RenderIconLeft={() => RenderIcon('lock')}
             title="Password"
             placeHolder="Enter your password here"
-            onChangeText={(text) => setBasicFormData({ ...basicFormData, password: text })}
+            onChangeText={text =>
+              setBasicFormData({...basicFormData, password: text})
+            }
           />
           <CommonInput
             isRequired
-            secureTextEntry
-            RenderIcon={RenderIcon}
+            RenderIconLeft={() => RenderIcon('lock',true)}
             title="Confirm Password"
             placeHolder="Confirm your password here"
-            onChangeText={(text) => setBasicFormData({ ...basicFormData, confirmPassword: text })}
+            onChangeText={text =>
+              setBasicFormData({...basicFormData, confirmPassword: text})
+            }
           />
-          <CommonButton onPress={onNextPressHandle} variant="solid" label="Next" />
+          <CommonButton
+            onPress={onNextPressHandle}
+            variant="solid"
+            label="Next"
+          />
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
@@ -184,5 +217,3 @@ const PersonalDetails: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 export default PersonalDetails;
-
-
